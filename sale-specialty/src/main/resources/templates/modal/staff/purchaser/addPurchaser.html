@@ -1,0 +1,87 @@
+<!-- 模态框:添加采购员，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addPurModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加采购员信息</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员姓名</span>
+                    </div>
+                    <input type="text" class="form-control" id="purName1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员性别</span>
+                    </div>
+                    <select class="form-control" id="purSex1">
+                        <option>男</option>
+                        <option>女</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员年龄</span>
+                    </div>
+                    <input type="text" class="form-control" id="purAge1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员电话</span>
+                    </div>
+                    <input type="text" class="form-control" id="purPhone1">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="purAddress1"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="addPurchaser()">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function addPurchaser(){
+        <!--从文本框获取数据-->
+        var purName=$("#purName1").val();
+        var purSex=$("#purSex1").val();
+        var purAge=$("#purAge1").val();
+        var purPhone=$("#purPhone1").val();
+        var purAddress=$("#purAddress1").val();
+        //调用$.ajax发送
+        $.ajax({
+            url:"/purchaser/addPurchaser",
+            type:"post",
+            data:{
+                "purName":purName,
+                "purSex":purSex,
+                "purAge":purAge,
+                "purPhone":purPhone,
+                "purAddress":purAddress
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　　alert("添加失败");
+            }
+        });
+    }
+</script>

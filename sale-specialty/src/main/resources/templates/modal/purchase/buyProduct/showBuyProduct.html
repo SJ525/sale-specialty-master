@@ -1,0 +1,83 @@
+<!-- 模态框:展示采购特产-->
+<div class="modal fade bs-example-modal-lg" id="showModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">展示采购特产详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">特产名称:</span>
+                    </div>
+                    <input class="form-control" type="text" id="proName3">
+                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#showProModal" id="showProduct">特产详情</button>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">所属采购订单:</span>
+                    </div>
+                    <input class="form-control" type="text" id="orderNumber3">
+                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#purOrderModal" id="showPurOrder">采购订单详情</button>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商:</span>
+                    </div>
+                    <input class="form-control" type="text" id="supName3">
+                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#supplierModal" id="showSupplier">供应商详情</button>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购数量:</span>
+                    </div>
+                    <input class="form-control" type="text" id="quantity3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购价格:</span>
+                    </div>
+                    <input class="form-control" type="text" id="price3">
+                </div>
+
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+<!--点击"采购详情"按钮,动态加载数据,添加到模态框中-->
+function showMore(buyId){
+    $.ajax({
+        type:'get',
+        url: "/buyProduct/getMsgById",
+        data:{"buyId":buyId},
+        success:function(data){
+            $("#proName3").val(data.proName);
+            $("#showProduct").val(data.buyProId);
+            $("#orderNumber3").val(data.orderNumber);
+            $("#showPurOrder").val(data.buyOrderId);
+            $("#supName3").val(data.supName);
+            $("#showSupplier").val(data.buySupId);
+            $("#quantity3").val(data.quantity+data.proUnit);
+            $("#price3").val("￥"+data.price);
+        }
+    });
+}
+</script>
+<!--导入特产模态框模块-->
+<div class="modal fade bs-example-modal-lg" th:replace="~{modal/common/showProduct}"></div>
+<!--导入展示采购订单模态框模块-->
+<div class="modal fade" th:replace="~{modal/common/showPurOrder}"></div>
+<!--导入展示供应商模态框模块-->
+<div class="modal fade" th:replace="~{modal/common/showSupplier}"></div>

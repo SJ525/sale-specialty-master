@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{common/header::header('修改登陆密码页面')}"></head>
+<style type="text/css">
+	.container-fluid{
+		background:url(../static/images/index.jpg) no-repeat center;
+        background-size:contain;
+	}
+	#mid{
+        padding: 20px;
+        background-color:#ffffff;
+        width:50%;
+        position:relative;
+        left:400px;
+	}
+</style>
+<body>
+<div class="container-fluid" th:style="'background:url(' + @{/images/index.jpg} + ');'">
+    <div class="row" style="height: 150px;"></div>
+    <div id="mid">
+        <div class="row" style="text-align:center">
+            <div class="col-sm-12">
+                <span style="font-size:30px;text-align:center">修改登陆密码页面</span>
+            </div>
+        </div>
+        <div class="row " style="height: 30px;"></div>
+        <form th:action="@{/toModPasswd}" th:method="post" th:object="${user}">
+            <div class="form-group row">
+                <div class="input-group mb-3">
+                    <div class="col-sm-3"></div>
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" style="width:100px;">用户名：</span>
+                    </div>
+                    <input type="text" class="form-control" name="userName" th:value="${name}" required autofocus>
+                    <div class="col-sm-3" style="color:red;padding-top:6px;" th:text="${msg1}"></div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="input-group mb-3">
+                    <div class="col-sm-3"></div>
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" style="width:100px;">新密码：</span>
+                    </div>
+                    <input type="password" class="form-control" name="userPasswd" th:value="${passwd}" placeholder="长度6位以上" required>
+                    <div class="col-sm-3" style="color:red;padding-top:6px;" th:text="${msg2}"></div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="input-group mb-3">
+                    <div class="col-sm-3"></div>
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" style="width:100px;">确认密码：</span>
+                    </div>
+                    <input type="password" class="form-control"  name="rePasswd" th:value="${repasswd}" required>
+                    <div class="col-sm-3" style="color:red;padding-top:6px;" th:text="${msg3}"></div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-3"></div>
+                <span style="color: red;" th:text="${msg4}"></span>
+            </div>
+            <div class="form-group row" style="text-align: center;">
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary">修改</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="reset" class="btn btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <a href="/">返回登陆页面</a>
+        </div>
+    </div>
+    <div class="row" style="height:470px;"></div>
+    <div class="row">
+        <div class="col-lg-12" style="text-align: center;">
+            Copyright ©2019-2020 Huang ShaoJia All rights reserved.
+        </div>
+    </div>
+</div>
+</body>
+</html>

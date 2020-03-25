@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{common/header::header('管理供应商信息页面')}"></head>
+<style>
+	.list-group-item,.carousel-item{
+		text-align:center;
+	}
+</style>
+<body>
+<div class="container-fluid">
+    <div class="row" th:replace="~{/common/nav::nav('material')}"></div>
+    <div class="row">
+        <div class="col-lg-2" style="padding-right:0px;">
+            <div class="card bg-light mb-3" style="height:650px;">
+                <div class="card-header">
+                    资料管理
+                </div>
+                <div class="list-group">
+                    <div class="list-group" >
+                        <div><a class="list-group-item" href="/customer/list">客户管理</a></div>
+                        <div><a class="list-group-item active" href="/supplier/list">供应商管理</a></div>
+                        <div><a class="list-group-item" href="/warehouse/list">仓库管理</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10" style="padding-left:0px;">
+            <div class="card bg-light mb-3">
+                <div class="card-header">当前位置:资料管理>供应商管理</div>
+                <div class="card-body" style="background-color: white;height:600px;">
+
+                    <form class="form-inline" method="get" action="/supplier/find">
+                        <a class="btn btn-success btn-xs" style="padding:0px;" href="/supplier/list">刷新页面</a>
+                        <div class="col-lg-1"></div>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSupModal">
+                            新增
+                        </button>
+                        <div class="col-lg-1"></div>
+                        <div class="form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">供应商类型:</span>
+                            </div>
+                            <select class="form-control" name="supType">
+                                <option>-请选择-</option>
+                                <option>小型供应商</option>
+                                <option>大型供应商</option>
+                            </select>
+                            &nbsp;&nbsp;&nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">供应商名称:</span>
+                            </div>
+                            <input type="text" class="form-control" name="supName" placeholder="模糊查询">
+                        </div>
+                        &nbsp;&nbsp;&nbsp;
+                        <button type="submit" class="btn btn-primary">查询</button>
+                    </form>
+
+                    <div class="row" style="padding:10px;color:red;"></div>
+
+                    <table class="table" style="border: 1px solid #cccfc9;">
+                        <thead>
+                        <tr class="table-secondary">
+                            <th scope="col">供应商id</th>
+                            <th scope="col">供应商类型</th>
+                            <th scope="col">供应商名称</th>
+                            <th scope="col">供应商电话</th>
+                            <th scope="col">供应商邮箱</th>
+                            <th scope="col">关联性</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="data:${datas.content}" th:object="${data}" onMouseOver="style.backgroundColor='#ffff99'" onMouseOut="style.backgroundColor='#FFFFFF'">
+                            <td th:text="*{supId}"></td>
+                            <td th:text="*{supType}"></td>
+                            <td th:text="*{supName}"></td>
+                            <td th:text="*{supPhone}"></td>
+                            <td th:text="*{supEmail}"></td>
+                            <td th:text="*{relation}"></td>
+                            <td>
+                                <button class="btn btn-success btn-xs" style="padding:0px;" data-toggle="modal" data-target="#showSupModal" th:onclick="showMore([[${data.supId}]])">详情</button>
+                                <button class="btn btn-primary btn-xs" style="padding:0px;" data-toggle="modal" data-target="#modSupModal" th:onclick="getMsg([[${data.supId}]])">修改</button>
+                                <button class="btn btn-danger btn-xs" style="padding:0px;" th:onclick="delSupplier([[${data.supId}]])">删除</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--导入分页模块-->
+                    <nav class="col-lg-1" th:replace="~{common/page}"></nav>
+                    <!--导入新增供应商模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/material/supplier/addSupplier}"></div>
+                    <!--导入展示供应商详情模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/material/supplier/showSupplier}"></div>
+                    <!--导入修改供应商信息模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/material/supplier/modSupplier}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" th:replace="~{common/footer}"></div>
+</div>
+<script>
+    <!--删除供应商信息-->
+    function delSupplier(id){
+        if(window.confirm('确定删除该供应商信息吗?')){
+            $.ajax({
+                url:"/supplier/delSupMsg",
+                type:"post",
+                data:{
+                    "supId":id,
+                },
+                dataType:"json",
+                success:function(data){
+                    alert(data.msg);
+                    window.location.reload();
+                },
+                error:function() {
+                　　alert("删除失败");
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

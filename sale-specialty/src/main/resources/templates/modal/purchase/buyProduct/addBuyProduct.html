@@ -1,0 +1,135 @@
+<!-- 模态框:添加采购特产，通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加采购特产</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">特产名称:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" id="proName1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">所属采购订单:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" id="orderNumber1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" id="supName1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购数量:</span>
+                    </div>
+                    <input class="form-control" type="text" id="quantity1">
+                </div>
+
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="addBuyProduct()">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$("#selectGet").click(function(){
+     $("#proName1").selectpicker({
+        noneSelectedText : '-请选择-'
+     });
+     $("#orderNumber1").selectpicker({
+        noneSelectedText : '-请选择-'
+     });
+     $("#supName1").selectpicker({
+        noneSelectedText : '-请选择-'
+     });
+     $(window).on('load', function() {
+        $('#proName1').selectpicker('val', '');
+        $('#proName1').selectpicker('refresh');
+        $('#orderNumber1').selectpicker('val', '');
+        $('#orderNumber1').selectpicker('refresh');
+        $('#supName1').selectpicker('val', '');
+        $('#supName1').selectpicker('refresh');
+     });
+
+     $.ajax({
+         type:'get',
+         url: "/product/getAllProduct",
+         dataType:'json',
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                 var proName=result[i].proName+"(计价单位:"+result[i].proUnit+")";
+                 $("#proName1").append($("<option value=\"" + result[i].proId + "\">" +proName+ "</option>"));
+             }
+             $('#proName1').selectpicker('val','');
+             $('#proName1').selectpicker('refresh');
+         }
+    });
+
+     $.ajax({
+         type:'get',
+         url: "/purOrder/getAllNormal",
+         dataType:'json',
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                 $("#orderNumber1").append($("<option value=\"" + result[i].orderId + "\">" + result[i].orderNumber + "</option>"));
+             }
+             $('#orderNumber1').selectpicker('val','');
+             $('#orderNumber1').selectpicker('refresh');
+         }
+    });
+
+    $.ajax({
+         type:'get',
+         url: "/supplier/getAllSupplier",
+         dataType:'json',
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                 $("#supName1").append($("<option value=\"" + result[i].supId + "\">" + result[i].supName + "</option>"));
+             }
+             $('#supName1').selectpicker('val','');
+             $('#supName1').selectpicker('refresh');
+         }
+    });
+})
+    function addBuyProduct(){
+        var buyProId=$("#proName1").val();
+        var buyOrderId=$("#orderNumber1").val();
+        var buySupId=$("#supName1").val();
+        var quantity=$("#quantity1").val();
+        $.ajax({
+            url:"/buyProduct/addBuyProduct",
+            type:"post",
+            data:{
+                "buyProId":buyProId,
+                "buyOrderId":buyOrderId,
+                "buySupId":buySupId,
+                "quantity":quantity
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　　alert("添加失败");
+            }
+        });
+    }
+</script>

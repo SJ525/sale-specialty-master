@@ -1,0 +1,161 @@
+<!-- 模态框:修改特产，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="modProModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">修改特产</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <form id="form2" method="post" enctype="multipart/form-data" class="form-inline">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">特产图片</span>
+                        </div>
+                        <input id="proImg2" name="file" type="file" multiple="multiple" class="form-control"/>
+                        <input id="upload2" name="upload" type="button" class="btn btn-primary" value="请修改">
+                    </div>
+                </form>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">特产类型:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="proTypeName2">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">特产名称:</span>
+                    </div>
+                    <input type="text" class="form-control" id="proName2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">进货价格:</span>
+                    </div>
+                    <input type="text" class="form-control" id="proInPrice2" placeholder="￥0.00">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">出货价格:</span>
+                    </div>
+                    <input type="text" class="form-control" id="proOutPrice2" placeholder="￥0.00">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">计价单位:</span>
+                    </div>
+                    <input type="text" class="form-control" id="proUnit2">
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="modSubmit()">修改提交</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--全局变量-->
+    var proId;
+    var proImg;
+    <!--列表动态获取-->
+    <!--下拉数据加载-->
+    function loadSelectData(cateProTypeId){
+          $.ajax({
+                type:'get',
+                url: "/category/getAllCategory",
+                dataType:'json',
+                success:function(product){
+                    for(var i=0;i<product.length;i++){
+                        $("#proTypeName2").append($("<option value=\"" + product[i].proTypeId + "\">" + product[i].proTypeName + "</option>"));
+                    }
+                    $('#proTypeName2').selectpicker('val',cateProTypeId);
+                    $('#proTypeName2').selectpicker('refresh');
+                }
+          });
+    }
+
+   <!--获取特产信息，并且绑定到文本框-->
+   function modifyMsg(id){
+        proId=id;
+        $.ajax({
+            type:"get",
+            url:"/product/getMsg",
+            data:{"proId":id},
+            success:function(data) {
+                $("#proName2").val(data.proName);
+                $("#proInPrice2").val(data.proInPrice);
+                $("#proOutPrice2").val(data.proOutPrice);
+                $("#proUnit2").val("1"+data.proUnit);
+                loadSelectData(data.cateProTypeId);
+            }
+        });
+        return proId;
+    }
+
+    <!--上传文件-->
+    $("#upload2").click(function () {
+       var formData = new FormData($("#form2")[0]);
+       $.ajax({
+           url:"/product/upload",
+           type:"post",
+           data:formData,
+           cache: false,
+           processData: false,
+           contentType: false,
+           async: false,
+           success:function (data) {
+                alert(data.msg);
+                $("#upload2").val("已修改");
+                proImg=data.proImg;
+           },error:function () {
+               alert("操作失败");
+           }
+       });
+       return proImg;
+   });
+
+    <!--提交修改-->
+    function modSubmit(){
+         //获取文本框输入的内容
+        var cateProTypeId=$("#proTypeName2").val();
+        var proName=$("#proName2").val();
+        var proInPrice=$("#proInPrice2").val();
+        var proOutPrice=$("#proOutPrice2").val();
+        var proUnit=$("#proUnit2").val();
+        //通过post提交数据给控制器，控制器进行添加操作
+        $.ajax({
+            url:"/product/modProduct",
+            type:"post",
+            dataType:"json",
+            data:{
+                "proId":proId,
+                "proImg":proImg,
+                "cateProTypeId":cateProTypeId,
+                "proName":proName,
+                "proInPrice":proInPrice,
+                "proOutPrice":proOutPrice,
+                "proUnit":proUnit
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　alert("修改失败");
+         }
+        });
+    }
+</script>

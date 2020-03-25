@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{common/header::header('采购订单管理页面')}"></head>
+<style>
+	.list-group-item,.carousel-item{
+		text-align:center;
+	}
+</style>
+<body>
+<div class="container-fluid">
+    <div class="row" th:replace="~{/common/nav::nav('purchase')}"></div>
+    <div class="row">
+        <div class="col-lg-2" style="padding-right:0px;">
+            <div class="card bg-light mb-3" style="height:650px;">
+                <div class="card-header">
+                    采购管理
+                </div>
+                <div class="list-group" >
+                    <div><a class="list-group-item active" href="/purOrder/list">采购订单管理</a></div>
+                    <div><a class="list-group-item" href="/buyProduct/list">采购特产管理</a></div>
+                    <div><a class="list-group-item" href="/purOrderReturn/list">采购订单退货管理</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10" style="padding-left:0px;">
+            <div class="card bg-light mb-3">
+
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-4">当前位置:采购管理>采购订单管理</div>
+                        <div class="col-lg-2">
+                            <a class="btn btn-success btn-xs" style="padding:0px;" href="/purOrder/list">刷新页面</a>
+                        </div>
+                        <div class="col-lg-2">
+                            <button class="btn btn-primary btn-xs" style="padding:0px;" data-toggle="modal" data-target="#addModal" id="selectGet">新建采购订单</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body" style="background-color: white;height:600px;">
+                    <form class="form-inline" method="get" action="/purOrder/queryFirst">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单编号:</span>
+                        </div>
+                        <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" name="orderId" id="orderNumber">
+                        </select>
+
+                        <div class="col-lg-1"></div>
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">采购员:</span>
+                        </div>
+                        <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" name="purManId" id="purManName">
+                        </select>
+                        <div class="col-lg-1"></div>
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">所入仓库:</span>
+                        </div>
+                        <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" name="purWareId" id="wareName">
+                        </select>
+
+                        <div class="col-lg-1"></div>
+                        <button type="submit" class="btn btn-primary">查询</button>
+                    </form>
+                    <div class="row" style="padding:5px;"></div>
+                    <form class="form-inline" method="get" action="/purOrder/querySecond">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">付款方式:</span>
+                        </div>
+                        <select class="selectpicker show-tick form-control" data-live-search="true" name="payWay">
+                            <option value="-请选择-">-请选择-</option>
+                            <option value="现金支付">现金支付</option>
+                            <option value="微信支付">微信支付</option>
+                            <option value="支付宝支付">支付宝支付</option>
+                            <option value="银行卡支付">银行卡支付</option>
+                        </select>
+                        <div style="width:50px;"></div>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">采购时间区间:</span>
+                        </div>
+                        <input class="form-control" type="date" name="startDate">--
+                        <input class="form-control" type="date" name="endDate">
+                        <div style="width:50px;"></div>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">订单类型:</span>
+                        </div>
+                        <select class="selectpicker show-tick form-control" data-live-search="true" name="type">
+                            <option value="-请选择-">-请选择-</option>
+                            <option value="正常订单">正常订单</option>
+                            <option value="退货订单">退货订单</option>
+                        </select>
+                        <div style="width:50px;"></div>
+                        <button type="submit" class="btn btn-primary">查询</button>
+                    </form>
+
+                    <div class="row" style="padding:5px;"></div>
+
+                    <table class="table" style="border: 1px solid #cccfc9;">
+                        <thead>
+                        <tr class="table-secondary">
+                            <th scope="col">订单id</th>
+                            <th scope="col">订单号</th>
+                            <th scope="col">采购员</th>
+                            <th scope="col">所入仓库</th>
+                            <th scope="col">付款方式</th>
+                            <th scope="col">采购时间</th>
+                            <th scope="col">订单类型</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="data:${datas.content}" th:object="${data}" onMouseOver="style.backgroundColor='#ffff99'" onMouseOut="style.backgroundColor='#FFFFFF'">
+                            <td th:text="*{orderId}"></td>
+                            <td th:text="*{orderNumber}"></td>
+                            <td th:text="*{purManName}"></td>
+                            <td th:text="*{wareName}"></td>
+                            <td th:text="*{payWay}"></td>
+                            <td th:text="*{#strings.substring(date,0,16)}"></td>
+                            <td th:text="*{type}"></td>
+                            <td>
+                                <button class="btn btn-primary btn-xs" style="padding:0px;" data-toggle="modal" data-target="#modModal" th:onclick="getMsg([[${data.orderId}]])">修改</button>
+                                <button class="btn btn-danger btn-xs" style="padding:0px;" th:onclick="delPurOrder([[${data.orderId}]])">删除</button>
+                                <button class="btn btn-success btn-xs" style="padding:0px;" data-toggle="modal" data-target="#showModal" th:onclick="showMore([[${data.orderId}]])">订单详情</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--导入分页模块-->
+                    <nav class="col-lg-1" th:replace="~{common/page}"></nav>
+                    <!--导入新建采购订单模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/purchase/purOrder/addPurOrder}"></div>
+                    <!--导入修改采购订单模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/purchase/purOrder/modPurOrder}"></div>
+                    <!--导入展示采购订单详情模态框模块-->
+                    <div class="modal fade fade bs-example-modal-lg" th:replace="~{modal/purchase/purOrder/showPurOrder}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" th:replace="~{common/footer}"></div>
+</div>
+<script>
+    <!--点击"删除"按钮，执行删除数据操作-->
+    function delPurOrder(orderId){
+        if(window.confirm('同时将删除此订单关联的数据，确定删除该订单？')){
+            $.ajax({
+                type:"post",
+                url:"/purOrder/delByOrderId",
+                data:{"orderId":orderId},
+                success:function(data){
+                    alert(data.msg);
+                    window.location.reload();
+                },
+                error:function(){
+                    alert("删除失败");
+                }
+            });
+        }
+    }
+    <!--为页面所有下拉列表动态加载数据-->
+    $(document).ready(function(){
+
+         $("#orderNumber").selectpicker({
+            noneSelectedText : '-请选择-'
+         });
+         $("#purManName").selectpicker({
+            noneSelectedText : '-请选择-'
+         });
+         $("#wareName").selectpicker({
+            noneSelectedText : '-请选择-'
+         });
+         $(window).on('load', function() {
+            $('#orderNumber').selectpicker('val', '');
+            $('#orderNumber').selectpicker('refresh');
+            $('#purManName').selectpicker('val', '');
+            $('#purManName').selectpicker('refresh');
+            $('#wareName').selectpicker('val', '');
+            $('#wareName').selectpicker('refresh');
+         });
+
+         $.ajax({
+             type:'get',
+             url: "/purOrder/getAllPurOrder",
+             dataType:'json',
+             success:function(result){
+                 for(var i=0;i<result.length;i++){
+                     $("#orderNumber").append($("<option value=\"" + result[i].orderId + "\">" + result[i].orderNumber + "</option>"));
+                     $("#purManName").append($("<option value=\"" + result[i].purManId + "\">" + result[i].purManName + "</option>"));
+                     $("#wareName").append($("<option value=\"" + result[i].purWareId + "\">" + result[i].wareName + "</option>"));
+                 }
+                 $('#orderNumber').selectpicker('val','');
+                 $('#orderNumber').selectpicker('refresh');
+                 $('#purManName').selectpicker('val','');
+                 $('#purManName').selectpicker('refresh');
+                 $('#wareName').selectpicker('val','');
+                 $('#wareName').selectpicker('refresh');
+             }
+        });
+    });
+</script>
+</body>
+</html>

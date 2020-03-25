@@ -1,0 +1,103 @@
+<!-- 模态框:展示采购订单-->
+<div class="modal fade bs-example-modal-lg" id="showModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">展示采购订单详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单编号:</span>
+                    </div>
+                    <input type="text" class="form-control" id="orderNumber3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员:</span>
+                    </div>
+                    <input type="text" class="form-control" id="purManName3">
+                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#purchaserModal" id="showPurchaser">采购员详情</button>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">所入仓库:</span>
+                    </div>
+                    <input type="text" class="form-control" id="wareName3">
+                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#warehouseModal" id="showWarehouse">仓库详情</button>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">付款方式:</span>
+                    </div>
+                    <input type="text" class="form-control" id="payWay3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购日期:</span>
+                    </div>
+                    <input type="text" class="form-control" id="date3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购特产总汇:</span>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <textarea class="form-control" id="proMsg3" rows="5" style="overflow:auto;"></textarea>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单总价格:</span>
+                    </div>
+                    <input type="text" class="form-control" id="totalPrice3">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单类型:</span>
+                    </div>
+                    <input class="form-control" type="text" id="type3">
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--点击"订单详情"按钮，为模态框的所有文本框动态加载数据-->
+    function showMore(orderId){
+        $.ajax({
+            type:"get",
+            url:"/purOrder/findByOrderId",
+            data:{"orderId":orderId},
+            success:function(data) {
+                $("#orderNumber3").val(data.orderNumber);
+                $("#purManName3").val(data.purManName);
+                $("#showPurchaser").val(data.purManId);
+                $("#wareName3").val(data.wareName);
+                $("#showWarehouse").val(data.purWareId);
+                $("#payWay3").val(data.payWay);
+                $("#date3").val(data.date);
+                $("#proMsg3").val(data.proMsg);
+                $("#totalPrice3").val("￥"+data.totalPrice);
+                $("#type3").val(data.type);
+            }
+        });
+    }
+</script>
+<!--导入展示采购员模态框模块-->
+<div class="modal fade" th:replace="~{modal/common/showPurchaser}"></div>
+<!--导入展示仓库模态框模块-->
+<div class="modal fade" th:replace="~{modal/common/showWarehouse}"></div>

@@ -1,0 +1,100 @@
+<!-- 模态框:添加销售退货订单，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加销售退货订单</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售退货订单号:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="orderNumber1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">开始退货日期:</span>
+                    </div>
+                    <input class="form-control" type="datetime-local" id="startDate1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">目前退货状态:</span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="新增默认'退货办理中'">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">完成退货日期:</span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="新增默认'暂无'">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">退货所用天数:</span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="新增默认'暂无'">
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="add()">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--为'销售退货订单号'加载下拉列表-->
+    $("#selectGet").click(function(){
+        $("#orderNumber1").selectpicker({
+            noneSelectedText : '-从已有的正常销售订单中选择-'
+         });
+         $(window).on('load', function() {
+            $('#orderNumber1').selectpicker('val', '');
+            $('#orderNumber1').selectpicker('refresh');
+         });
+
+         $.ajax({
+             type:'get',
+             url: "/saleOrder/getAllNormal",
+             dataType:'json',
+             success:function(result){
+                 for(var i=0;i<result.length;i++){
+                     $("#orderNumber1").append($("<option value=\"" + result[i].orderId + "\">" + result[i].orderNumber + "</option>"));
+                 }
+                 $('#orderNumber1').selectpicker('val','');
+                 $('#orderNumber1').selectpicker('refresh');
+             }
+        });
+    })
+    <!--点击'添加'按钮,执行添加操作-->
+    function add(){
+        var orderId=$("#orderNumber1").val();
+        var startDate=$("#startDate1").val().replace("T"," ");
+        $.ajax({
+            url:"/saleOrderReturn/addSaleOrderReturn",
+            type:"post",
+            data:{
+                "orderId":orderId,
+                "startDate":startDate
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function(){
+                alert("添加失败");
+            }
+        });
+    }
+</script>

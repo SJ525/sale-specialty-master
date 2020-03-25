@@ -1,0 +1,73 @@
+<!-- 模态框:展示采购特产，通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="showModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">该采购特产详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">特产名称:</span>
+                    </div>
+                    <input class="form-control" type="text" id="proName3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">所属采购订单:</span>
+                    </div>
+                    <input class="form-control" type="text" id="orderNumber3">
+                    <button class="btn btn-success btn-xs">采购订单详情</button>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商:</span>
+                    </div>
+                    <input class="form-control" type="text" id="supName3">
+                    <button class="btn btn-success btn-xs">供应商详情</button>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购数量:</span>
+                    </div>
+                    <input class="form-control" type="text" id="quantity3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购价格:</span>
+                    </div>
+                    <input class="form-control" type="text" id="price3">
+                </div>
+
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+<!--点击"采购详情"按钮,动态加载数据,添加到模态框中-->
+function showMore(buyId){
+    $.ajax({
+        type:'get',
+        url: "/buyProduct/getMsgById",
+        data:{"buyId":buyId},
+        success:function(data){
+            $("#proName3").val(data.proName);
+            $("#orderNumber3").val(data.orderNumber);
+            $("#supName3").val(data.supName);
+            $("#quantity3").val(data.quantity+data.proUnit);
+            $("#price3").val("￥"+data.price);
+        }
+    });
+}
+</script>

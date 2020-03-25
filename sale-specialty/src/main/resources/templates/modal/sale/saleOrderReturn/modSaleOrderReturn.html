@@ -1,0 +1,115 @@
+<!-- 模态框:修改销售退货订单，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="modModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">修改销售退货订单</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售退货订单号:</span>
+                    </div>
+                    <input class="form-control" type="text" id="orderNumber2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">是否转化成正常订单?</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-live-search="true" id="changeType2">
+                        <option value="false">否</option>
+                        <option value="true">是</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">开始退货日期:</span>
+                    </div>
+                    <input class="form-control" type="datetime-local" id="startDate2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">目前退货状态:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-live-search="true" id="status2">
+                        <option value="退货办理中">退货办理中</option>
+                        <option value="退货已完成">退货已完成</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">完成退货日期:</span>
+                    </div>
+                    <input class="form-control" type="datetime-local" id="endDate2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">退货所用天数:</span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="自动计算">
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="mod()">修改</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--全局变量-->
+    var returnId;
+    <!--点击原来页面的'修改'按钮，给模态框的文本框和下拉列表动态加载数据-->
+    function getMsg(id){
+        returnId=id;
+        $.ajax({
+            type:"get",
+            url:"/saleOrderReturn/getByReturnId",
+            data:{"returnId":returnId},
+            success:function(data) {
+                $("#orderNumber2").val(data.orderNumber);
+                $("#changeType2").val(data.changeType);
+                var startDate= document.querySelector("#startDate2");
+                startDate.value =data.startDate.substring(0,10)+"T"+data.startDate.substring(11);
+                $("#status2").val(data.status);
+                var endDate= document.querySelector("#endDate2");
+                endDate.value =data.endDate.substring(0,10)+"T"+data.endDate.substring(11);
+            }
+        });
+        return returnId;
+    }
+    <!--执行修改操作-->
+    function mod(){
+        var startDate=$("#startDate2").val().replace("T"," ");
+        var changeType=$("#changeType2").val();
+        var status=$("#status2").val();
+        var endDate=$("#endDate2").val().replace("T"," ");
+        $.ajax({
+            type:"post",
+            url:"/saleOrderReturn/modSaleOrderReturn",
+            data:{
+                "returnId":returnId,
+                "changeType":changeType,
+                "startDate":startDate,
+                "status":status,
+                "endDate":endDate
+            },
+            success:function(data) {
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function(){
+                alert("修改失败");
+            }
+        });
+    }
+</script>

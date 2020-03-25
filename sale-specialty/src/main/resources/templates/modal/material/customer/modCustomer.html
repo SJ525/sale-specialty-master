@@ -1,0 +1,111 @@
+<!-- 模态框:修改客户信息，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="modCusModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">修改客户信息</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户类型</span>
+                    </div>
+                    <select class="form-control" id="cusType3">
+                        <option>个体</option>
+                        <option>企业</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户名称</span>
+                    </div>
+                    <input type="text" class="form-control" id="cusName3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户电话</span>
+                    </div>
+                    <input type="tel" class="form-control" id="cusPhone3">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户邮箱</span>
+                    </div>
+                    <input type="email" class="form-control" id="cusEmail3">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="cusAddress3"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="modCustomer()">修改</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--全局变量-->
+    var cusId;
+    <!--通过cusId，从后台获取数据，并且绑定到文本框-->
+    function getMsg(id){
+        $.ajax({
+            type:"get",
+            url:"/customer/getCusMsg",
+            data:{"cusId":id},
+            async:false,
+            success:function(data) {
+                $("#cusType3").val(data.cusType);
+                $("#cusName3").val(data.cusName);
+                $("#cusPhone3").val(data.cusPhone);
+                $("#cusEmail3").val(data.cusEmail);
+                $("#cusAddress3").val(data.cusAddress);
+                cusId=data.cusId;
+            }
+        });
+        return cusId;
+    }
+    <!--修改客户信息-->
+    function modCustomer(){
+        <!--获取文本框输入的内容-->
+        var cusType=$("#cusType3").val();
+        var cusName=$("#cusName3").val();
+        var cusPhone=$("#cusPhone3").val();
+        var cusEmail=$("#cusEmail3").val();
+        var cusAddress=$("#cusAddress3").val();
+        <!--通过post方式提交数据给控制器，控制器进行修改操作-->
+        $.ajax({
+            url:"/customer/modCusMsg",
+            type:"post",
+            data:{
+                "cusId":cusId,
+                "cusType":cusType,
+                "cusName":cusName,
+                "cusPhone":cusPhone,
+                "cusEmail":cusEmail,
+                "cusAddress":cusAddress
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　alert("修改失败");
+          }
+        });
+    }
+</script>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{common/header::header('采购退货订单管理')}"></head>
+<style>
+	.list-group-item,.carousel-item{
+		text-align:center;
+	}
+</style>
+<body>
+<div class="container-fluid">
+    <div class="row" th:replace="~{/common/nav::nav('purchase')}"></div>
+    <div class="row">
+        <div class="col-lg-2" style="padding-right:0px;">
+            <div class="card bg-light mb-3" style="height:650px;">
+                <div class="card-header">
+                    采购管理
+                </div>
+                <div class="list-group" >
+                    <div><a class="list-group-item" href="/purOrder/list">采购订单管理</a></div>
+                    <div><a class="list-group-item" href="/buyProduct/list">采购特产管理</a></div>
+                    <div><a class="list-group-item active" href="/purOrderReturn/list">采购订单退货管理</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10" style="padding-left:0px;">
+            <div class="card bg-light mb-3">
+
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-4">当前位置:采购管理>采购退货订单管理</div>
+                        <div class="col-lg-2">
+                            <a class="btn btn-success btn-xs" style="padding:0px;" href="/purOrderReturn/list">刷新页面</a>
+                        </div>
+                        <div class="col-lg-2">
+                            <button class="btn btn-primary btn-xs" style="padding:0px;" data-toggle="modal" data-target="#addModal" id="selectGet">新建采购退货订单</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body" style="background-color: white;height:600px;">
+                    <form class="form-inline" method="get" action="/purOrderReturn/query">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">采购退货订单号:</span>
+                        </div>
+                        <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" name="orderId" id="orderNumber">
+                        </select>
+                        <div style="width:30px;"></div>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">开始退货时间区间:</span>
+                        </div>
+                        <input class="form-control" type="date" name="queryStart">-
+                        <input class="form-control" type="date" name="queryEnd">
+                        <div style="width:30px;"></div>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">退货状态:</span>
+                        </div>
+                        <select class="form-control" name="status">
+                            <option value="-请选择-">-请选择-</option>
+                            <option value="退货办理中">退货办理中</option>
+                            <option value="退货已完成">退货已完成</option>
+                        </select>
+                        <div style="width:20px;"></div>
+                        <button type="submit" class="btn btn-primary">查询</button>
+                    </form>
+                    <div class="row" style="padding:5px;"></div>
+
+                    <table class="table" style="border: 1px solid #cccfc9;">
+                        <thead>
+                        <tr class="table-secondary">
+                            <th scope="col">采购退货订单id</th>
+                            <th scope="col">采购退货订单号</th>
+                            <th scope="col">开始退货时间</th>
+                            <th scope="col">目前退货状态</th>
+                            <th scope="col">完成退货时间</th>
+                            <th scope="col">退货所用天数</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="data:${datas.content}" th:object="${data}" onMouseOver="style.backgroundColor='#ffff99'" onMouseOut="style.backgroundColor='#FFFFFF'">
+                            <td th:text="*{returnId}"></td>
+                            <td th:text="*{orderNumber}"></td>
+                            <td th:text="*{startDate}==null?'暂无':*{#strings.substring(startDate,0,16)}"></td>
+                            <td th:text="*{status}"></td>
+                            <td th:text="*{endDate}==null?'暂无':*{#strings.substring(endDate,0,16)}"></td>
+                            <td th:text="*{days}==null?'暂无':*{days}+|天|"></td>
+                            <td>
+                                <button class="btn btn-primary btn-xs" style="padding:0px;" data-toggle="modal" data-target="#modModal" th:onclick="getMsg([[${data.returnId}]])">修改</button>
+                                <button class="btn btn-danger btn-xs" style="padding:0px;" th:onclick="delPurOrderReturn([[${data.returnId}]])">删除</button>
+                                <button class="btn btn-success btn-xs" style="padding:0px;" data-toggle="modal" data-target="#showModal" th:onclick="showMore([[${data.returnId}]])">订单详情</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--导入分页模块-->
+                    <nav class="col-lg-1" th:replace="~{common/page}"></nav>
+                    <!--导入新建采购退货订单模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/purchase/purOrderReturn/addPurOrderReturn}"></div>
+                    <!--导入修改采购退货订单模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/purchase/purOrderReturn/modPurOrderReturn}"></div>
+                    <!--导入展示采购退货订单详情模态框模块-->
+                    <div class="modal fade bs-example-modal-lg" th:replace="~{modal/purchase/purOrderReturn/showPurOrderReturn}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" th:replace="~{common/footer}"></div>
+</div>
+<script>
+    <!--点击"删除"按钮，执行删除数据操作-->
+    function delPurOrderReturn(returnId){
+        if(window.confirm('同时将删除该订单关联的数据，确定删除该订单？')){
+            $.ajax({
+                type:"post",
+                url:"/purOrderReturn/delByReturnId",
+                data:{"returnId":returnId},
+                success:function(data){
+                    alert(data);
+                    window.location.reload();
+                },
+                error:function(){
+                    alert("删除失败");
+                }
+            });
+        }
+    }
+    <!--为页面的下拉列表动态加载数据-->
+    $(document).ready(function(){
+         $("#orderNumber").selectpicker({
+            noneSelectedText : '-请选择-'
+         });
+         $(window).on('load', function() {
+            $('#orderNumber').selectpicker('val', '');
+            $('#orderNumber').selectpicker('refresh');
+         });
+         $.ajax({
+             type:'get',
+             url: "/purOrderReturn/getAllPurOrderReturn",
+             dataType:'json',
+             success:function(result){
+                 for(var i=0;i<result.length;i++){
+                     $("#orderNumber").append($("<option value=\"" + result[i].orderId + "\">" + result[i].orderNumber + "</option>"));
+                 }
+                 $('#orderNumber').selectpicker('val','');
+                 $('#orderNumber').selectpicker('refresh');
+             }
+        });
+    });
+</script>
+</body>
+</html>

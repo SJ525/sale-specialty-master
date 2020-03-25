@@ -1,0 +1,77 @@
+<!-- 模态框:展示特产，通过$.get将表单数据发送到服务器 -->
+<div class="modal fade bs-example-modal-lg" id="showProModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">该特产详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-4"><img src="#" id="proImg6" width="250"></div>
+                    <div class="col-lg-8">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">特产名称:</span>
+                            </div>
+                            <input class="form-control" type="text" id="proName6">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">所属类型:</span>
+                            </div>
+                            <input class="form-control" type="text" id="proType6">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">进货价格:</span>
+                            </div>
+                            <input class="form-control" type="text" id="proInPrice6">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">出货价格:</span>
+                            </div>
+                            <input class="form-control" type="text" id="proOutPrice6">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">库存数量:</span>
+                            </div>
+                            <input class="form-control" type="text" id="proStock6">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+<!--点击"特产详情"按钮,动态加载数据,添加到模态框中-->
+$("#showProduct").click(function(){
+    var proId=$(this).val();
+    $.ajax({
+        type:'get',
+        url: "/product/getMsg",
+        data:{"proId":proId},
+        success:function(data){
+            $("#proImg6").attr("src",data.proImg)
+            $("#proName6").val(data.proName);
+            $("#proType6").val(data.proTypeName);
+            $("#proInPrice6").val("￥"+data.proInPrice);
+            $("#proOutPrice6").val("￥"+data.proOutPrice);
+            $("#proStock6").val(data.proStock+data.proUnit);
+        }
+    });
+});
+</script>

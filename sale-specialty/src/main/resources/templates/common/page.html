@@ -1,0 +1,59 @@
+<nav>
+    <ul th:if="${datas.totalPages<=10}" class="pagination">
+        <li class="page-item">
+            <a class="page-link" href="#" th:text="|共有| + ${datas.totalPages} + |页|"></a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" th:href="${URL} + |page=0|" th:text="首页"></a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#" tabindex="-1"
+               th:href="${URL} + |page=| + ${datas.number < 1 ? 0 : (datas.number - 1)}">上一页</a>
+        </li>
+        <li class="page-item"
+            th:each="pageNum : ${#numbers.sequence(0, datas.totalPages - 1)}"
+            th:class="|page-item| + ${pageNum == datas.number ? ' active' : ''}">
+
+            <a class="page-link" href="#" th:text="${pageNum + 1}"
+               th:href="${URL} + |page=| + ${pageNum}">1</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#"
+               th:href="${URL} + |page=| + ${datas.number >= (datas.totalPages - 1) ? datas.number : (datas.number + 1)}">下一页</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" th:href="${URL} + |page=|+ ${datas.totalPages-1}" th:text="尾页"></a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#" th:text="|当前页:第| + ${datas.number+1} + |页|"></a>
+        </li>
+    </ul>
+    <ul th:if="${datas.totalPages>10}" class="pagination">
+        <li class="page-item">
+            <a class="page-link" href="#" th:text="|共有| + ${datas.totalPages} + |页|"></a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" th:href="${URL} + |page=0|" th:text="首页"></a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#" tabindex="-1"
+               th:href="${URL} + |page=| + ${datas.number < 1 ? 0 : (datas.number - 1)}">上一页</a>
+        </li>
+        <li class="page-item"
+            th:each="pageNum : ${#numbers.sequence(0,9)}"
+            th:class="|page-item| + ${pageNum == datas.number ? ' active' : ''}">
+            <a class="page-link" href="#" th:text="${pageNum + 1}"
+               th:href="${URL} + |page=| + ${pageNum}">1</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#"
+               th:href="${URL} + |page=| + ${datas.number >= (datas.totalPages - 1) ? datas.number : (datas.number + 1)}">下一页</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" th:href="${URL} + |page=|+ ${datas.totalPages-1}" th:text="尾页"></a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="#" th:text="|当前页:第| + ${datas.number+1} + |页|"></a>
+        </li>
+    </ul>
+</nav>

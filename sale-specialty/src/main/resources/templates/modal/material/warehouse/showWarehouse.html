@@ -1,0 +1,61 @@
+<!-- 模态框:展示该该仓库信息-->
+<div class="modal fade" id="showWareModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">展示该仓库详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库名称</span>
+                    </div>
+                    <input type="text" class="form-control" id="wareName3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员</span>
+                    </div>
+                    <input type="text" class="form-control" id="wareSmName3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库大小</span>
+                    </div>
+                    <input type="text" class="form-control" id="wareSize3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="wareAddress3"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function showMsg(id){
+        $.ajax({
+            type:"get",
+            url:"/warehouse/getWareMsg",
+            data:{"wareId":id},
+            success:function(data) {
+                $("#wareName3").val(data.wareName);
+                $("#wareSmName3").val(data.wareSmName);
+                $("#wareSize3").val(data.wareSize);
+                $("#wareAddress3").val(data.wareAddress);
+            }
+        });
+    }
+</script>

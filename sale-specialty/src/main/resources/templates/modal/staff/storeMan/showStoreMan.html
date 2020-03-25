@@ -1,0 +1,70 @@
+<!-- 模态框:展示该仓库管理员详情-->
+<div class="modal fade" id="showSmModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">展示该仓库管理员详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员姓名</span>
+                    </div>
+                    <input type="text" class="form-control" id="smName2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员性别</span>
+                    </div>
+                    <input type="text" class="form-control" id="smSex2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员年龄</span>
+                    </div>
+                    <input type="text" class="form-control" id="smAge2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员电话</span>
+                    </div>
+                    <input type="text" class="form-control" id="smPhone2">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="smAddress2"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function showMore(id){
+        $.ajax({
+            type:"get",
+            url:"/storeMan/getSmMsg",
+            data:{"smId":id},
+            success:function(data) {
+                $("#smName2").val(data.smName);
+                $("#smSex2").val(data.smSex);
+                $("#smAge2").val(data.smAge);
+                $("#smPhone2").val(data.smPhone);
+                $("#smAddress2").val(data.smAddress);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,74 @@
+<!-- 模态框:展示销售退货订单详情-->
+<div class="modal fade bs-example-modal-lg" id="showModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">展示该销售退货订单详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售退货订单号:</span>
+                    </div>
+                    <input class="form-control" type="text" id="orderNumber3">
+                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#saleOrderModal" id="showSaleOrder">对应的销售订单详情</button>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">开始退货日期:</span>
+                    </div>
+                    <input class="form-control" type="text" id="startDate3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">目前退货状态:</span>
+                    </div>
+                    <input class="form-control" type="text" id="status3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">完成退货日期:</span>
+                    </div>
+                    <input class="form-control" type="text" id="endDate3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">退货所用天数:</span>
+                    </div>
+                    <input class="form-control" type="text" id="days3">
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--导入展示销售订单模态框模块-->
+<div class="modal fade" th:replace="~{modal/common/showSaleOrder}"></div>
+<script>
+    <!--点击"退货订单详情"按钮，为模态框的所有文本框动态加载数据-->
+    function showMore(id){
+        $.ajax({
+            type:"get",
+            url:"/saleOrderReturn/getByReturnId",
+            data:{"returnId":id},
+            success:function(data) {
+                $("#showSaleOrder").val(data.orderId);
+                $("#orderNumber3").val(data.orderNumber);
+                $("#startDate3").val(data.startDate);
+                $("#status3").val(data.status);
+                $("#endDate3").val(data.endDate==null?'暂无':data.endDate);
+                $("#days3").val(data.days==null?'暂无':(data.days+'天'));
+            }
+        });
+    }
+</script>

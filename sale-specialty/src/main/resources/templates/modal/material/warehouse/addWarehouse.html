@@ -1,0 +1,99 @@
+<!-- 模态框:添加仓库，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addWareModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加仓库信息</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库名称</span>
+                    </div>
+                    <input type="text" class="form-control" id="wareName1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="wareSmName1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库大小</span>
+                    </div>
+                    <input type="text" class="form-control" id="wareSize1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="wareAddress1"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="addWarehouse()">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--页面一加载完，立即给id="wareSmName1"的下拉列表动态绑定数据-->
+    $(document).ready(function(){
+      $("#wareSmName1").selectpicker({
+       noneSelectedText : '-请选择-'
+      });
+      $(window).on('load', function() {
+       $('#wareSmName1').selectpicker('val', '');
+       $('#wareSmName1').selectpicker('refresh');
+      });
+      //下拉数据加载
+      $.ajax({
+            type:'get',
+            url: "/storeMan/getAllStoreMan",
+            dataType:'json',
+            success:function(ware){
+                for(var i=0;i<ware.length;i++){
+                    $("#wareSmName1").append($("<option value=\"" + ware[i].smId + "\">" + ware[i].smName + "</option>"));
+                }
+                $('#wareSmName1').selectpicker('val', '');
+                $('#wareSmName1').selectpicker('refresh');
+            }
+      });
+    });
+
+    function addWarehouse(){
+        <!--从文本框获取输入的数据-->
+        var wareName=$("#wareName1").val();
+        var wareSmId=$("#wareSmName1").val();
+        var wareSize=$("#wareSize1").val();
+        var wareAddress=$("#wareAddress1").val();
+        //调用$.ajax发送
+        $.ajax({
+            url:"/warehouse/addWarehouse",
+            type:"post",
+            data:{
+                "wareName":wareName,
+                "wareSmId":wareSmId,
+                "wareSize":wareSize,
+                "wareAddress":wareAddress
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　　alert("添加失败");
+            }
+        });
+    }
+</script>

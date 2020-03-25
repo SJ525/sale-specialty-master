@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="~{common/header::header('管理特产类型页面')}"></head>
+<style>
+	.list-group-item,.carousel-item{
+		text-align:center;
+	}
+	.li{
+	    list-style-type: none;
+	}
+	#test{
+	    border:1px solid red;
+	}
+</style>
+<body>
+<div class="container-fluid">
+    <div class="row" th:replace="~{/common/nav::nav('product')}"></div>
+    <div class="row">
+        <div class="col-lg-2" style="padding-right:0px;">
+            <div class="card bg-light mb-3" style="height:650px;">
+                <div class="card-header">特产管理</div>
+                <div class="list-group" >
+                    <div><a class="list-group-item active" href="/category/list">特产类别管理</a></div>
+                    <div><a class="list-group-item" href="/product/list">特产信息管理</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10" style="padding-left:0px;">
+            <div class="card bg-light mb-3">
+                <div class="card-header">当前位置:特产管理>管理特产类别</div>
+                <div class="card-body" style="background-color: white;height:600px;">
+
+                    <form class="form-inline" method="get" action="/category/findType">
+                        <a class="btn btn-success btn-xs" style="padding:0px;" th:href="@{/category/list}">刷新页面</a>
+                        <div class="col-lg-1"></div>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addProType">
+                            新增
+                        </button>
+                        <div class="col-lg-1"></div>
+                        <div class="form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">特产类型:</span>
+                            </div>
+                            <input type="text" class="form-control" name="proTypeName" placeholder="模糊查询" th:value="${proTypeName}">
+                        </div>
+                        <div class="col-lg-1"></div>
+                        <button type="submit" class="btn btn-primary">查询</button>
+                        <div class="col-lg-1"></div>
+                    </form>
+
+                    <div class="row" style="padding:10px;color:red;"></div>
+
+                    <table class="table" style="border: 1px solid #cccfc9;">
+                        <thead>
+                            <tr class="table-secondary">
+                                <th scope="col">特产类型id</th>
+                                <th scope="col">特产类型名称(不可重复)</th>
+                                <th scope="col">关联性</th>
+                                <th scope="col">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="data:${datas.content}" th:object="${data}" onMouseOver="style.backgroundColor='#ffff99'" onMouseOut="style.backgroundColor='#FFFFFF'">
+                                <td th:text="*{proTypeId}"></td>
+                                <td th:text="*{proTypeName}"></td>
+                                <td th:text="*{relation}"></td>
+                                <td>
+                                    <button class="btn btn-primary btn-xs" style="padding:0px;" data-toggle="modal" data-target="#modProType" th:onclick="modType([[${data.proTypeId}]])">修改</button>
+                                    <button class="btn btn-danger btn-xs" style="padding:0px;" th:onclick="delProType([[${data.proTypeId}]])">删除</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!--添加分页模块-->
+                    <nav class="col-lg-1" th:replace="~{common/page}"></nav>
+                    <!--添加新增特产类型模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/product/addType}"></div>
+                    <!--添加修改特产类型模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/product/modType}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" th:replace="~{common/footer}"></div>
+</div>
+<script>
+    //执行删除特产类型操作
+    function delProType(id){
+        if(window.confirm('确定删除该类型吗?')){
+            $.ajax({
+                url:"/category/delProType",
+                type:"post",
+                data:{
+                    "proTypeId":id,
+                },
+                dataType:"json",
+                success:function(data){
+                    alert(data.msg);
+                    window.location.reload();
+                },
+                error:function() {
+                　　alert("删除失败");
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!-- 模态框:修改采购员信息，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="modPurModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">修改采购员信息</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员姓名</span>
+                    </div>
+                    <input type="text" class="form-control" id="purName3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员性别</span>
+                    </div>
+                    <select class="form-control" id="purSex3">
+                        <option>男</option>
+                        <option>女</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员年龄</span>
+                    </div>
+                    <input type="text" class="form-control" id="purAge3">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员电话</span>
+                    </div>
+                    <input type="text" class="form-control" id="purPhone3">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="purAddress3"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="modPurchaser()">修改</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--全局变量-->
+    var purId;
+    <!--通过purId，从后台获取数据，并且绑定到文本框-->
+    function getMsg(id){
+        $.ajax({
+            type:"get",
+            url:"/purchaser/getPurMsg",
+            data:{"purId":id},
+            async:false,
+            success:function(data) {
+                $("#purName3").val(data.purName);
+                $("#purSex3").val(data.purSex);
+                $("#purAge3").val(data.purAge);
+                $("#purPhone3").val(data.purPhone);
+                $("#purAddress3").val(data.purAddress);
+                purId=data.purId;
+            }
+        });
+        return purId;
+    }
+    <!--修改采购员信息-->
+    function modPurchaser(){
+        <!--获取文本框输入的内容-->
+        var purName=$("#purName3").val();
+        var purSex=$("#purSex3").val();
+        var purAge=$("#purAge3").val();
+        var purPhone=$("#purPhone3").val();
+        var purAddress=$("#purAddress3").val();
+        <!--通过post方式提交数据给控制器，控制器进行修改操作-->
+        $.ajax({
+            url:"/purchaser/modPurMsg",
+            type:"post",
+            data:{
+                "purId":purId,
+                "purSex":purSex,
+                "purName":purName,
+                "purPhone":purPhone,
+                "purAge":purAge,
+                "purAddress":purAddress
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　alert("修改失败");
+          }
+        });
+    }
+</script>

@@ -1,0 +1,73 @@
+<!-- 模态框:展示该采购员详情-->
+<div class="modal fade" id="showPurModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">展示该采购员详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员姓名</span>
+                    </div>
+                    <input type="text" class="form-control" id="purName2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员性别</span>
+                    </div>
+                    <select class="form-control" id="purSex2">
+                        <option>男</option>
+                        <option>女</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员年龄</span>
+                    </div>
+                    <input type="text" class="form-control" id="purAge2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员电话</span>
+                    </div>
+                    <input type="text" class="form-control" id="purPhone2">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="purAddress2"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function showMore(id){
+        $.ajax({
+            type:"get",
+            url:"/purchaser/getPurMsg",
+            data:{"purId":id},
+            success:function(data) {
+                $("#purName2").val(data.purName);
+                $("#purSex2").val(data.purSex);
+                $("#purAge2").val(data.purAge);
+                $("#purPhone2").val(data.purPhone);
+                $("#purAddress2").val(data.purAddress);
+            }
+        });
+    }
+</script>

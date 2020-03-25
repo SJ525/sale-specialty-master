@@ -1,0 +1,154 @@
+<!-- 模态框:修改采购订单，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="modModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">修改采购订单</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单编号:</span>
+                    </div>
+                    <input type="text" class="form-control" id="orderNumber2">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="purManName2">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">所入仓库:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="wareName2">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">付款方式:</span>
+                    </div>
+                    <select class="form-control" id="payWay2">
+                        <option value="现金支付">现金支付</option>
+                        <option value="微信支付">微信支付</option>
+                        <option value="支付宝支付">支付宝支付</option>
+                        <option value="银行卡支付">银行卡支付</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购日期:</span>
+                    </div>
+                    <input class="form-control" type="datetime-local" id="date2">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购特产:</span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="可到'采购特产管理'进行修改">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单类型:</span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="可到'采购退货订单管理'进行修改">
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="modPurOrder()">修改</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--全局变量-->
+    var orderId;
+    <!--列表动态获取-->
+    <!--采购员列表数据加载函数-->
+    function loadSelectOne(purManId){
+        $.ajax({
+             type:'get',
+             url: "/purchaser/getAllPurchaser",
+             dataType:'json',
+             success:function(result){
+                for(var i=0;i<result.length;i++){
+                     $("#purManName2").append($("<option value=\"" + result[i].purId + "\">" + result[i].purName + "</option>"));
+                 }
+                 $('#purManName2').selectpicker('val',purManId);
+                 $('#purManName2').selectpicker('refresh');
+             }
+        });
+    }
+    <!--仓库列表数据加载函数-->
+    function loadSelectTwo(wareId){
+        $.ajax({
+             type:'get',
+             url: "/warehouse/getAllWarehouse",
+             dataType:'json',
+             success:function(result){
+                 for(var i=0;i<result.length;i++){
+                     $("#wareName2").append($("<option value=\"" + result[i].wareId + "\">" + result[i].wareName + "</option>"));
+                 }
+                 $('#wareName2').selectpicker('val',wareId);
+                 $('#wareName2').selectpicker('refresh');
+             }
+        });
+    }
+    <!--执行修改模态框全部数据的动态加载-->
+    <!--并且返回为全局变量orderId赋值，并返回-->
+    function getMsg(id){
+        orderId=id;
+        $.ajax({
+            type:"get",
+            url:"/purOrder/findByOrderId",
+            data:{"orderId":orderId},
+            success:function(data) {
+                $("#orderNumber2").val(data.orderNumber);
+                $("#payWay2").val(data.payWay);
+                var date = document.querySelector("#date2");
+                date.value =data.date.substring(0,10)+"T"+data.date.substring(11);
+                loadSelectOne(data.purManId);
+                loadSelectTwo(data.purWareId);
+            }
+        });
+        return orderId;
+    }
+    <!--点击模态框下面的“修改”按钮，执行修改操作-->
+    function modPurOrder(){
+        var orderNumber=$("#orderNumber2").val();
+        var purManId=$("#purManName2").val();
+        var purWareId=$("#wareName2").val();
+        var payWay=$("#payWay2").val();
+        var date=$("#date2").val().replace("T"," ");
+        $.ajax({
+            type:"post",
+            url:"/purOrder/modPurOrder",
+            data:{
+                "orderId":orderId,
+                "orderNumber":orderNumber,
+                "purManId":purManId,
+                "purWareId":purWareId,
+                "payWay":payWay,
+                "date":date
+            },
+            success:function(data) {
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function(){
+                alert("修改失败");
+            }
+        });
+    }
+</script>

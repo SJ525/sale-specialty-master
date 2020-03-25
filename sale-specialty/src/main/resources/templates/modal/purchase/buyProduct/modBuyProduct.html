@@ -1,0 +1,144 @@
+<!-- 模态框:修改采购特产，通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="modModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">修改采购特产</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">特产名称:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" id="proName2">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">所属采购订单:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" id="orderNumber2">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" id="supName2">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购数量:</span>
+                    </div>
+                    <input class="form-control" type="text" id="quantity2">
+                </div>
+
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="modBuyProduct()">修改</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--定义全局变量buyId-->
+    var buyId;
+
+    <!--将三个下拉列表动态加载数据的ajax封装成函数-->
+    function selectLoadOne(buyProId){
+         $.ajax({
+             type:'get',
+             url: "/product/getAllProduct",
+             dataType:'json',
+             success:function(result){
+                 for(var i=0;i<result.length;i++){
+                     $("#proName2").append($("<option value=\"" + result[i].proId + "\">" + result[i].proName + "</option>"));
+                 }
+                 $('#proName2').selectpicker('val',buyProId);
+                 $('#proName2').selectpicker('refresh');
+             }
+        });
+    }
+
+    function selectLoadTwo(buyOrderId){
+         $.ajax({
+             type:'get',
+             url: "/purOrder/getAllPurOrder",
+             dataType:'json',
+             success:function(result){
+                 for(var i=0;i<result.length;i++){
+                     $("#orderNumber2").append($("<option value=\"" + result[i].orderId + "\">" + result[i].orderNumber + "</option>"));
+                 }
+                 $('#orderNumber2').selectpicker('val',buyOrderId);
+                 $('#orderNumber2').selectpicker('refresh');
+             }
+        });
+    }
+
+    function selectLoadThree(buySupId){
+        $.ajax({
+             type:'get',
+             url: "/supplier/getAllSupplier",
+             dataType:'json',
+             success:function(result){
+                 for(var i=0;i<result.length;i++){
+                     $("#supName2").append($("<option value=\"" + result[i].supId + "\">" + result[i].supName + "</option>"));
+                 }
+                 $('#supName2').selectpicker('val',buySupId);
+                 $('#supName2').selectpicker('refresh');
+             }
+        });
+    }
+
+    <!--点击"修改"按钮，为模态框的所有文本框和下拉列表动态赋值-->
+    function getMsg(id){
+        buyId=id;
+        $.ajax({
+            type:'get',
+            url: "/buyProduct/getMsgById",
+            data:{"buyId":buyId},
+            success:function(data){
+                selectLoadOne(data.buyProId);
+                selectLoadTwo(data.buyOrderId);
+                selectLoadThree(data.buySupId);
+                $("#quantity2").val(data.quantity);
+            }
+        });
+        return buyId;
+    }
+
+    <!--点击"修改提交"按钮，执行修改操作-->
+    function modBuyProduct(){
+        var buyProId=$("#proName2").val();
+        var buyOrderId=$("#orderNumber2").val();
+        var buySupId=$("#supName2").val();
+        var quantity=$("#quantity2").val();
+        $.ajax({
+            type:'post',
+            url: "/buyProduct/modBuyProduct",
+            data:{
+                "buyId":buyId,
+                "buyProId":buyProId,
+                "buyOrderId":buyOrderId,
+                "buySupId":buySupId,
+                "quantity":quantity
+                },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function(){
+                alert("修改失败");
+            }
+        });
+    }
+</script>

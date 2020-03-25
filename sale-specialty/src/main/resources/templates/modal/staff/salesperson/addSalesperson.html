@@ -1,0 +1,87 @@
+<!-- 模态框:添加销售员，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addSpModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加销售员信息</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员姓名</span>
+                    </div>
+                    <input type="text" class="form-control" id="spName1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员性别</span>
+                    </div>
+                    <select class="form-control" id="spSex1">
+                        <option>男</option>
+                        <option>女</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员年龄</span>
+                    </div>
+                    <input type="text" class="form-control" id="spAge1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员电话</span>
+                    </div>
+                    <input type="text" class="form-control" id="spPhone1">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="spAddress1"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="addSalesperson()">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function addSalesperson(){
+        <!--从文本框获取数据-->
+        var spName=$("#spName1").val();
+        var spSex=$("#spSex1").val();
+        var spAge=$("#spAge1").val();
+        var spPhone=$("#spPhone1").val();
+        var spAddress=$("#spAddress1").val();
+        //调用$.ajax发送
+        $.ajax({
+            url:"/salesperson/addSalesperson",
+            type:"post",
+            data:{
+                "spName":spName,
+                "spSex":spSex,
+                "spAge":spAge,
+                "spPhone":spPhone,
+                "spAddress":spAddress
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　　alert("添加失败");
+            }
+        });
+    }
+</script>

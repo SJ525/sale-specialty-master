@@ -1,0 +1,154 @@
+<!-- 模态框:添加特产，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加具体特产</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <form id="form" method="post" enctype="multipart/form-data" class="form-inline">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">特产图片</span>
+                        </div>
+                        <input id="file" name="file" type="file" multiple="multiple" class="form-control"/>
+                        <input id="upload" name="upload" type="button" class="btn btn-primary" value="请上传">
+                    </div>
+                </form>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">特产类型</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="proTypeName1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">特产名称</span>
+                    </div>
+                    <input type="text" class="form-control" id="proName">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">进货价格</span>
+                    </div>
+                    <input type="text" class="form-control" id="proInPrice" placeholder="￥0.00">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">出货价格</span>
+                    </div>
+                    <input type="text" class="form-control" id="proOutPrice" placeholder="￥0.00">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">计价单位</span>
+                    </div>
+                    <input type="text" class="form-control" id="proUnit">
+                </div>
+
+
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="add">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function(){
+var proImg=null;
+$("#add").click(function(){
+       //获取输入的数据
+       var cateProTypeId=$("#proTypeName1").val();
+       var proName=$("#proName").val();
+       var proInPrice=$("#proInPrice").val();
+       var proOutPrice=$("#proOutPrice").val();
+       var proUnit=$("#proUnit").val();
+       if(proImg==null){
+            if(window.confirm("没有上传图片，确定继续添加？")){
+                getData(cateProTypeId,proImg,proName,proInPrice,proOutPrice,proUnit);
+            }
+            return;
+       }
+       getData(cateProTypeId,proImg,proName,proInPrice,proOutPrice,proUnit);
+});
+function getData(cateProTypeId,proImg,proName,proInPrice,proOutPrice,proUnit)
+{
+    $.ajax({
+            url:"/product/addProduct",
+            type:"post",
+            data:{
+                "cateProTypeId":cateProTypeId,
+                "proImg":proImg,
+                "proName":proName,
+                "proInPrice":proInPrice,
+                "proOutPrice":proOutPrice,
+                "proUnit":proUnit
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　　alert("添加失败");
+        }
+    });
+}
+      <!--给id="proTypeName1"的下拉列表动态绑定数据-->
+      $("#proTypeName1").selectpicker({
+       noneSelectedText : '-请选择-'
+      });
+      $(window).on('load', function() {
+       $('#proTypeName1').selectpicker('val', '');
+       $('#proTypeName1').selectpicker('refresh');
+      });
+      <!--下拉数据加载-->
+      $.ajax({
+            type:'get',
+            url: "/category/getAllCategory",
+            dataType:'json',
+            success:function(product){
+                for(var i=0;i<product.length;i++){
+                    $("#proTypeName1").append($("<option value=\"" + product[i].proTypeId + "\">" + product[i].proTypeName + "</option>"));
+                }
+                $('#proTypeName1').selectpicker('val', '');
+                $('#proTypeName1').selectpicker('refresh');
+            }
+      });
+
+    <!--上传文件-->
+   $("#upload").click(function () {
+       var formData = new FormData($("#form")[0]);
+       $.ajax({
+           url:"/product/upload",
+           type:"post",
+           data:formData,
+           cache: false,
+           processData: false,
+           contentType: false,
+           async: false,
+           success:function (data) {
+                alert(data.msg);
+                proImg=data.proImg;
+                $("#upload").val("已上传");
+           },error:function () {
+               alert("操作失败");
+           }
+       });
+        return proImg;
+   });
+});
+</script>

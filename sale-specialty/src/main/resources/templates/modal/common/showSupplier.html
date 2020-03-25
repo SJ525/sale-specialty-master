@@ -1,0 +1,73 @@
+<!-- 模态框:展示供应商详情-->
+<div class="modal fade" id="supplierModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">该供应商详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商类型</span>
+                    </div>
+                    <input type="text" class="form-control" id="supType5">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商名称</span>
+                    </div>
+                    <input type="text" class="form-control" id="supName5">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商电话</span>
+                    </div>
+                    <input type="text" class="form-control" id="supPhone5">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商邮箱</span>
+                    </div>
+                    <input type="text" class="form-control" id="supEmail5">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="supAddress5"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#showSupplier").click(function(){
+        var supId=$(this).val();
+        $.ajax({
+            type:"get",
+            url:"/supplier/getSupMsg",
+            data:{"supId":supId},
+            success:function(data) {
+                $("#supType5").val(data.supType);
+                $("#supName5").val(data.supName);
+                $("#supPhone5").val(data.supPhone);
+                $("#supEmail5").val(data.supEmail);
+                $("#supAddress5").val(data.supAddress);
+            }
+        });
+    });
+</script>

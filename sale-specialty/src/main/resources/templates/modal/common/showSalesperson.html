@@ -1,0 +1,72 @@
+<!-- 模态框:展示销售员详情-->
+<div class="modal fade" id="salespersonModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">该销售员详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员姓名</span>
+                    </div>
+                    <input type="text" class="form-control" id="spName4">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员性别</span>
+                    </div>
+                    <input type="text" class="form-control" id="spSex4">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员年龄</span>
+                    </div>
+                    <input type="text" class="form-control" id="spAge4">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员电话</span>
+                    </div>
+                    <input type="text" class="form-control" id="spPhone4">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="spAddress4"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--点击"订单详情"按钮，为模态框的所有文本框动态加载数据-->
+    $("#showSalesperson").click(function(){
+        var spId=$(this).val();
+        $.ajax({
+            type:"get",
+            url:"/salesperson/getSpMsg",
+            data:{"spId":spId},
+            success:function(data) {
+                $("#spName4").val(data.spName);
+                $("#spSex4").val(data.spSex);
+                $("#spAge4").val(data.spAge);
+                $("#spPhone4").val(data.spPhone);
+                $("#spAddress4").val(data.spAddress);
+            }
+        });
+    });
+</script>

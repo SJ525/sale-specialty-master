@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{common/header::header('管理仓库信息页面')}"></head>
+<style>
+	.list-group-item,.carousel-item{
+		text-align:center;
+	}
+</style>
+<body>
+<div class="container-fluid">
+    <div class="row" th:replace="~{/common/nav::nav('material')}"></div>
+    <div class="row">
+        <div class="col-lg-2" style="padding-right:0px;">
+            <div class="card bg-light mb-3" style="height:650px;">
+                <div class="card-header">
+                    资料管理
+                </div>
+                <div class="list-group">
+                    <div><a class="list-group-item" href="/customer/list">客户管理</a></div>
+                    <div><a class="list-group-item" href="/supplier/list">供应商管理</a></div>
+                    <div><a class="list-group-item active" href="/warehouse/list">仓库管理</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10" style="padding-left:0px;">
+            <div class="card bg-light mb-3">
+                <div class="card-header">当前位置:资料管理>仓库管理</div>
+                <div class="card-body" style="background-color: white;height:600px;">
+
+                    <form class="form-inline" method="get" action="/warehouse/find">
+                        <a class="btn btn-success btn-xs" style="padding:0px;" href="/warehouse/list">刷新页面</a>
+                        <div class="col-lg-1"></div>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addWareModal">
+                            新增
+                        </button>
+                        &nbsp;&nbsp;&nbsp;
+                        <div class="form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">仓库名称</span>
+                            </div>
+                            <input type="text" class="form-control" name="wareName" placeholder="模糊查询">
+                        </div>
+                        &nbsp;&nbsp;&nbsp;
+                        <div class="form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">仓库管理员</span>
+                            </div>
+                            <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="wareSmName" name="wareSmName">
+                            </select>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;
+
+                        <div class="form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">仓库大小区间</span>
+                            </div>
+                            <input type="text" class="form-control" name="startSize" style="width:80px;" value="0">--
+                            <input type="text" class="form-control" name="endSize" style="width:80px;" value="100">
+                        </div>
+                        &nbsp;&nbsp;&nbsp;
+                        <button type="submit" class="btn btn-primary">查询</button>
+                    </form>
+
+                    <div class="row" style="padding:10px;color:red;"></div>
+
+                    <table class="table" style="border: 1px solid #cccfc9;">
+                        <thead>
+                        <tr class="table-secondary">
+                            <th scope="col">仓库id</th>
+                            <th scope="col">仓库名称(唯一)</th>
+                            <th scope="col">仓库管理员</th>
+                            <th scope="col">仓库大小</th>
+                            <th scope="col">关联性</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="data:${datas.content}" th:object="${data}" onMouseOver="style.backgroundColor='#ffff99'" onMouseOut="style.backgroundColor='#FFFFFF'">
+                            <td th:text="*{wareId}"></td>
+                            <td th:text="*{wareName}"></td>
+                            <td th:text="*{wareSmName}"></td>
+                            <td th:text="*{wareSize}+|平方米|"></td>
+                            <td th:text="*{relation}"></td>
+                            <td>
+                                <button class="btn btn-success btn-xs" style="padding:0px;" data-toggle="modal" data-target="#showWareModal" th:onclick="showMsg([[${data.wareId}]])">详情</button>
+                                <button class="btn btn-primary btn-xs" style="padding:0px;" data-toggle="modal" data-target="#modWareModal" th:onclick="getMsg([[${data.wareId}]])">修改</button>
+                                <button class="btn btn-danger btn-xs" style="padding:0px;" th:onclick="delWarehouse([[${data.wareId}]])">删除</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--导入分页模块-->
+                    <nav class="col-lg-1" th:replace="~{common/page}"></nav>
+                    <!--导入新增仓库模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/material/warehouse/addWarehouse}"></div>
+                    <!--导入修改仓库信息模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/material/warehouse/modWarehouse}"></div>
+                    <!--导入修改仓库信息模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/material/warehouse/showWarehouse}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" th:replace="~{common/footer}"></div>
+</div>
+<script>
+<!--页面一加载完，立即给id="wareSmName"的下拉列表动态绑定数据-->
+$(document).ready(function(){
+  $("#wareSmName").selectpicker({
+   noneSelectedText : '-请选择-'
+  });
+  $(window).on('load', function() {
+   $('#wareSmName').selectpicker('val', '');
+   $('#wareSmName').selectpicker('refresh');
+  });
+  //下拉数据加载
+  $.ajax({
+        type:'get',
+        url: "/warehouse/getAllSm",
+        dataType:'json',
+        success:function(ware){
+            for(var i=0;i<ware.length;i++){
+                $("#wareSmName").append($("<option value=\"" + ware[i].smName + "\">" + ware[i].smName + "</option>"));
+            }
+            $('#wareSmName').selectpicker('val', '');
+            $('#wareSmName').selectpicker('refresh');
+        }
+  });
+});
+    <!--删除仓库信息-->
+    function delWarehouse(id){
+        if(window.confirm('确定删除该仓库信息吗?')){
+            $.ajax({
+                url:"/warehouse/delWareMsg",
+                type:"post",
+                data:{
+                    "wareId":id,
+                },
+                dataType:"json",
+                success:function(data){
+                    alert(data.msg);
+                    window.location.reload();
+                },
+                error:function() {
+                　　alert("删除失败");
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

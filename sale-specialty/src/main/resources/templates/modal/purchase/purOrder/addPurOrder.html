@@ -1,0 +1,133 @@
+<!-- 模态框:新建采购订单，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade bs-example-modal-lg" id="addModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">新建采购订单</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单编号:</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="由系统自动生成(系统时间+随机数)">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购员:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="purManName1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">所入仓库:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="wareName1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">付款方式:</span>
+                    </div>
+                    <select class="form-control" id="payWay1">
+                        <option value="现金支付">现金支付</option>
+                        <option value="微信支付">微信支付</option>
+                        <option value="支付宝支付">支付宝支付</option>
+                        <option value="银行卡支付">银行卡支付</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">采购日期:</span>
+                    </div>
+                    <input class="form-control" type="datetime-local" id="date1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单类型:</span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="创建时默认为'正常订单'">
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="add()">新建</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$("#selectGet").click(function(){
+    $("#purManName1").selectpicker({
+    noneSelectedText : '-请选择-'
+     });
+     $("#wareName1").selectpicker({
+        noneSelectedText : '-请选择-'
+     });
+     $(window).on('load', function() {
+        $('#purManName1').selectpicker('val', '');
+        $('#purManName1').selectpicker('refresh');
+        $('#wareName1').selectpicker('val', '');
+        $('#wareName1').selectpicker('refresh');
+     });
+
+     $.ajax({
+         type:'get',
+         url: "/purchaser/getAllPurchaser",
+         dataType:'json',
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                 $("#purManName1").append($("<option value=\"" + result[i].purId + "\">" + result[i].purName + "</option>"));
+             }
+             $('#purManName1').selectpicker('val','');
+             $('#purManName1').selectpicker('refresh');
+         }
+    });
+
+    $.ajax({
+         type:'get',
+         url: "/warehouse/getAllWarehouse",
+         dataType:'json',
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                 $("#wareName1").append($("<option value=\"" + result[i].wareId + "\">" + result[i].wareName + "</option>"));
+             }
+             $('#wareName1').selectpicker('val','');
+             $('#wareName1').selectpicker('refresh');
+         }
+    });
+})
+function add(){
+    var purManId=$("#purManName1").val();
+    var purWareId=$("#wareName1").val();
+    var payWay=$("#payWay1").val();
+    var date=$("#date1").val().replace("T"," ");
+    $.ajax({
+        url:"/purOrder/addPurOrder",
+        type:"post",
+        data:{
+            "purManId":purManId,
+            "purWareId":purWareId,
+            "payWay":payWay,
+            "date":date
+        },
+        success:function(data){
+            alert(data.msg);
+            window.location.reload();
+        },
+        error:function() {
+        　　　alert("新建失败");
+        }
+    });
+}
+</script>

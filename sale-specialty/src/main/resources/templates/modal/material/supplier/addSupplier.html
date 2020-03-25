@@ -1,0 +1,89 @@
+<!-- 模态框:添加供应商，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addSupModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加供应商信息</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商类型</span>
+                    </div>
+                    <select class="form-control" id="supType1">
+                        <option value="小型供应商">小型供应商</option>
+                        <option value="大型供应商">大型供应商</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商名称</span>
+                    </div>
+                    <input type="text" class="form-control" id="supName1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商电话</span>
+                    </div>
+                    <input type="tel" class="form-control" id="supPhone1">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商邮箱</span>
+                    </div>
+                    <input type="email" class="form-control" id="supEmail1">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">供应商地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="supAddress1"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="addSupplier()">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function addSupplier(){
+        <!--从文本框获取数据-->
+        var supType=$("#supType1").val();
+        var supName=$("#supName1").val();
+        var supPhone=$("#supPhone1").val();
+        var supEmail=$("#supEmail1").val();
+        var supAddress=$("#supAddress1").val();
+        //调用$.ajax发送
+        $.ajax({
+            url:"/supplier/addSupplier",
+            type:"post",
+            data:{
+                "supType":supType,
+                "supName":supName,
+                "supPhone":supPhone,
+                "supEmail":supEmail,
+                "supAddress":supAddress
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　　alert("添加失败");
+            }
+        });
+    }
+</script>

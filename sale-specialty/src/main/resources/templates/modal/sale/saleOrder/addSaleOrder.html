@@ -1,0 +1,133 @@
+<!-- 模态框:添加销售订单，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加销售订单</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单编号:</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="由系统自动生成(系统时间+随机数)">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售员:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="spName1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="8" data-live-search="true" id="cusName1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户支付方式:</span>
+                    </div>
+                    <select class="form-control" id="payWay1">
+                        <option value="现金支付">现金支付</option>
+                        <option value="微信支付">微信支付</option>
+                        <option value="支付宝支付">支付宝支付</option>
+                        <option value="银行卡支付">银行卡支付</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售日期:</span>
+                    </div>
+                    <input class="form-control" type="datetime-local" id="date1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">订单类型:</span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="创建时默认为'正常订单'">
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="add()">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$("#selectGet").click(function(){
+    $("#spName1").selectpicker({
+    noneSelectedText : '-请选择-'
+     });
+     $("#cusName1").selectpicker({
+        noneSelectedText : '-请选择-'
+     });
+     $(window).on('load', function() {
+        $('#spName1').selectpicker('val', '');
+        $('#spName1').selectpicker('refresh');
+        $('#cusName1').selectpicker('val', '');
+        $('#cusName1').selectpicker('refresh');
+     });
+
+     $.ajax({
+         type:'get',
+         url: "/salesperson/getAllSalesperson",
+         dataType:'json',
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                 $("#spName1").append($("<option value=\"" + result[i].spId + "\">" + result[i].spName + "</option>"));
+             }
+             $('#spName1').selectpicker('val','');
+             $('#spName1').selectpicker('refresh');
+         }
+    });
+
+    $.ajax({
+         type:'get',
+         url: "/customer/getAllCustomer",
+         dataType:'json',
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                 $("#cusName1").append($("<option value=\"" + result[i].cusId + "\">" + result[i].cusName + "</option>"));
+             }
+             $('#cusName1').selectpicker('val','');
+             $('#cusName1').selectpicker('refresh');
+         }
+    });
+})
+function add(){
+    var saleSpId=$("#spName1").val();
+    var saleCusId=$("#cusName1").val();
+    var payWay=$("#payWay1").val();
+    var date=$("#date1").val().replace("T"," ");
+    $.ajax({
+        url:"/saleOrder/addSaleOrder",
+        type:"post",
+        data:{
+            "saleSpId":saleSpId,
+            "saleCusId":saleCusId,
+            "payWay":payWay,
+            "date":date
+        },
+        success:function(data){
+            alert(data.msg);
+            window.location.reload();
+        },
+        error:function() {
+        　　　alert("添加失败");
+        }
+    });
+}
+</script>

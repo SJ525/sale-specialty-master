@@ -1,0 +1,114 @@
+<!-- 模态框:添加销售特产，通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加销售特产</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">特产名称:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" id="proName1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">所属销售订单:</span>
+                    </div>
+                    <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" id="orderNumber1">
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售数量:</span>
+                    </div>
+                    <input class="form-control" type="text" id="quantity1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">销售价格:</span>
+                    </div>
+                    <input class="form-control" type="text" placeholder="自动计算">
+                </div>
+
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="addSaleProduct()">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$("#selectGet").click(function(){
+     $("#proName1").selectpicker({
+        noneSelectedText : '-从库存不为0的特产中选择-'
+     });
+     $("#orderNumber1").selectpicker({
+        noneSelectedText : '-从正常的销售订单中选择-'
+     });
+     $(window).on('load', function() {
+        $('#proName1').selectpicker('val', '');
+        $('#proName1').selectpicker('refresh');
+        $('#orderNumber1').selectpicker('val', '');
+        $('#orderNumber1').selectpicker('refresh');
+     });
+
+     $.ajax({
+         type:'get',
+         url: "/product/findProductsByStock",
+         dataType:'json',
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                var proName=result[i].proName +"(库存:"+result[i].proStock+result[i].proUnit.substring(1)+")";
+                 $("#proName1").append($("<option value=\"" + result[i].proId + "\">" + proName+ "</option>"));
+             }
+             $('#proName1').selectpicker('val','');
+             $('#proName1').selectpicker('refresh');
+         }
+    });
+
+     $.ajax({
+         type:'get',
+         url: "/saleOrder/getAllNormal",
+         dataType:'json',
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                 $("#orderNumber1").append($("<option value=\"" + result[i].orderId + "\">" + result[i].orderNumber + "</option>"));
+             }
+             $('#orderNumber1').selectpicker('val','');
+             $('#orderNumber1').selectpicker('refresh');
+         }
+    });
+})
+    function addSaleProduct(){
+        var saleProId=$("#proName1").val();
+        var saleOrderId=$("#orderNumber1").val();
+        var quantity=$("#quantity1").val();
+        $.ajax({
+            url:"/saleProduct/addSaleProduct",
+            type:"post",
+            data:{
+                "saleProId":saleProId,
+                "saleOrderId":saleOrderId,
+                "quantity":quantity
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　　alert("添加失败");
+            }
+        });
+    }
+</script>

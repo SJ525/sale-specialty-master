@@ -1,0 +1,48 @@
+<!-- 模态框:添加特产类型，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addProType">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加特产类型</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name">特产类型名称:</label>
+                    <input type="text" class="form-control" id="name">
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="add">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function(){
+    $("#add").click(function(){
+        //获取文本框输入的内容
+         var proTypeName=$("#name").val();
+        //通过post提交数据给控制器，控制器进行添加操作
+        $.ajax({
+                url:"/category/addProType",
+                type:"post",
+                data:{
+                    "proTypeName":proTypeName
+                },
+                dataType:"json",
+                success:function(data){
+                    alert(data.msg);
+                    window.location.reload();
+                },
+                error:function() {
+                　　　alert("添加失败,类型已存在");
+                }
+            });
+         });
+    })
+</script>

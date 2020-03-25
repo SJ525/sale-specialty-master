@@ -1,0 +1,87 @@
+<!-- 模态框:添加仓库管理员，并通过$.get将表单数据发送到服务器 -->
+<div class="modal fade" id="addSmModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">添加仓库管理员信息</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员姓名</span>
+                    </div>
+                    <input type="text" class="form-control" id="smName1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员性别</span>
+                    </div>
+                    <select class="form-control" id="smSex1">
+                        <option>男</option>
+                        <option>女</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员年龄</span>
+                    </div>
+                    <input type="text" class="form-control" id="smAge1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员电话</span>
+                    </div>
+                    <input type="text" class="form-control" id="smPhone1">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">仓库管理员地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="smAddress1"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" th:onclick="addStoreMan()">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function addStoreMan(){
+        <!--从文本框获取数据-->
+        var smName=$("#smName1").val();
+        var smSex=$("#smSex1").val();
+        var smAge=$("#smAge1").val();
+        var smPhone=$("#smPhone1").val();
+        var smAddress=$("#smAddress1").val();
+        //调用$.ajax发送
+        $.ajax({
+            url:"/storeMan/addStoreMan",
+            type:"post",
+            data:{
+                "smName":smName,
+                "smSex":smSex,
+                "smAge":smAge,
+                "smPhone":smPhone,
+                "smAddress":smAddress
+            },
+            success:function(data){
+                alert(data.msg);
+                window.location.reload();
+            },
+            error:function() {
+            　　　alert("添加失败");
+            }
+        });
+    }
+</script>

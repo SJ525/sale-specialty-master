@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{common/header::header('采购与销售退货统计')}"></head>
+<style>
+	.list-group-item,.carousel-item{
+		text-align:center;
+	}
+</style>
+<body>
+<div class="container-fluid">
+    <div class="row" th:replace="~{/common/nav::nav('analyse')}"></div>
+    <div class="row">
+        <div class="col-lg-2" style="padding-right:0px;">
+            <div class="card bg-light mb-3" style="height:650px;">
+                <div class="card-header">统计分析</div>
+                <div class="list-group" >
+                    <div><a class="list-group-item" href="/anaNumber/list">采购量与销售量统计</a></div>
+                    <div><a class="list-group-item active" href="/anaReturn/list">采购与销售退货统计</a></div>
+                    <div><a class="list-group-item" href="/anaProfit/list">支出与收入统计</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10" style="padding-left:0px;">
+            <div class="card bg-light mb-3">
+                <div class="card-header">当前位置:统计分析>采购与销售退货统计</div>
+                <div class="card-body" style="background-color: white;height:600px;">
+
+                    <form class="form-inline" method="get" action="/anaReturn/find">
+                        <a class="btn btn-success btn-xs" style="padding:0px;" href="/anaReturn/list">刷新页面</a>
+                        <div class="col-lg-1"></div>
+                        <div class="form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">特产名称:</span>
+                            </div>
+                            <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" name="proId" id="proName">
+                            </select>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;
+                        <div class="form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">按照时间区间统计:</span>
+                            </div>
+                            <input class="form-control" type="date" name="startDate">-
+                            <input class="form-control" type="date" name="endDate">
+                        </div>
+                        &nbsp;&nbsp;&nbsp;
+                        <button type="submit" class="btn btn-primary">统计</button>
+                    </form>
+
+                    <div class="row" style="padding:10px;font-size:25px;" th:text="${msg}"></div>
+
+                    <table class="table" style="border: 1px solid #cccfc9;">
+                        <thead>
+                        <tr class="table-secondary">
+                            <th scope="col">特产id</th>
+                            <th scope="col">特产名称</th>
+                            <th scope="col">采购总数量</th>
+                            <th scope="col">采购退货数量</th>
+                            <th scope="col">采购退货率</th>
+                            <th scope="col">销售总数量</th>
+                            <th scope="col">销售退货数量</th>
+                            <th scope="col">销售退货率</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="data:${datas.content}" th:object="${data}" onMouseOver="style.backgroundColor='#ffff99'" onMouseOut="style.backgroundColor='#FFFFFF'">
+                            <td th:text="*{proId}"></td>
+                            <td th:text="*{proName}"></td>
+                            <td th:text="*{purQuaAll}+*{proUnit}"></td>
+                            <td th:text="*{purRetNum}+*{proUnit}"></td>
+                            <td th:text="*{purRetRate}"></td>
+                            <td th:text="*{saleQuaAll}+*{proUnit}"></td>
+                            <td th:text="*{saleRetNum}+*{proUnit}"></td>
+                            <td th:text="*{saleRetRate}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--导入分页模块-->
+                    <nav class="col-lg-1" th:replace="~{common/page}"></nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" th:replace="~{common/footer}"></div>
+</div>
+<script>
+     $("#proName").selectpicker({
+        noneSelectedText : '-从已采购的特产中选择-'
+     });
+     $(window).on('load', function() {
+        $('#proName').selectpicker('val', '');
+        $('#proName').selectpicker('refresh');
+     });
+
+     $.ajax({
+         type:'get',
+         url: "/buyProduct/getAllBuyProduct",
+         success:function(result){
+             for(var i=0;i<result.length;i++){
+                 $("#proName").append($("<option value=\"" + result[i].proId + "\">" + result[i].proName+ "</option>"));
+             }
+             $('#proName').selectpicker('val','');
+             $('#proName').selectpicker('refresh');
+         }
+    });
+</script>
+</body>
+</html>

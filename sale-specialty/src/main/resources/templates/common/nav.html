@@ -1,0 +1,61 @@
+
+<div class="row" th:fragment="nav(module)">
+
+    <div class="col-lg-2" style="padding-right:0px;">
+        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="nav-item nav-link font-weight-bold" th:text="特产销售管理系统"></div>
+        </nav>
+    </div>
+
+    <div class="col-lg-7" style="padding-left:0px;padding-right:0px;">
+        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="navbar-nav">
+                <a id="index" class="nav-item nav-link" th:href="@{/index}">首页</a>
+                <a id="product" class="nav-item nav-link" th:href="@{/category/list}">特产管理</a>
+                <a id="staff" class="nav-item nav-link" th:href="@{/purchaser/list}">员工管理</a>
+                <a id="material" class="nav-item nav-link" th:href="@{/customer/list}">资料管理</a>
+                <a id="purchase" class="nav-item nav-link" th:href="@{/purOrder/list}">采购管理</a>
+                <a id="sale" class="nav-item nav-link" th:href="@{/saleOrder/list}">销售管理</a>
+                <a id="analyse" class="nav-item nav-link" th:href="@{/anaNumber/list}">统计分析</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="col-lg-2" style="padding-left:0px;padding-right:0px;">
+        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="nav-item nav-link font-weight-bold" th:text="|当前账号:|"></div>
+        </nav>
+    </div>
+
+    <div class="col-lg-1" style="padding-left:0px;">
+        <nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="nav-item nav-link dropdown">
+                <a class="dropdown-toggle font-weight-bold" data-toggle="dropdown">更多</a>
+                <ul class="dropdown-menu">
+                    <li class="nav-link"><a href="#" th:href="@{/logout}">退出系统</a></li>
+                    <li class="nav-link"><a href="#" th:onclick="cancel()">注销账号</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <script>
+        var module = '[[ ${module} ]]';
+        $("#" + module).addClass("active");
+        //注销账号函数
+        function cancel(){
+            if(window.confirm('确定注销当前登陆账号吗?')){
+                $.ajax({
+                url:"/cancel",
+                type:"post",
+                success:function(data){
+                     alert(data.msg);
+                     window.open('/');
+                },
+                error:function() {
+                　　alert("撤销失败！");
+                }
+            });
+            }
+        }
+    </script>
+</div>

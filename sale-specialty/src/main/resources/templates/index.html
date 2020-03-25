@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{common/header::header('系统首页')}"></head>
+<style>
+   img{
+    height:650px;
+   }
+</style>
+
+<body>
+<div class="container-fluid">
+    <div th:replace="~{common/nav::nav('index')}"></div>
+    <div id="demo" class="carousel slide" data-ride="carousel" style="background:#3366ff;height:700px;">
+        <!-- 指示符 -->
+        <ul class="carousel-indicators">
+            <li data-target="#demo" data-slide-to="0" class="active"></li>
+            <li data-target="#demo" data-slide-to="1"></li>
+            <li data-target="#demo" data-slide-to="2"></li>
+            <li data-target="#demo" data-slide-to="3"></li>
+        </ul>
+        <!-- 轮播图片 -->
+        <div class="carousel-inner" style="text-align:center">
+            <div class="carousel-item active">
+                <img th:src="@{/images/fruitApple1.jpg}">
+                <div class="carousel-caption">山东烟台苹果</div>
+            </div>
+
+            <div class="carousel-item" style="text-align:center">
+                <img th:src="@{/images/maoTai.jpg}">
+                <div class="carousel-caption">贵州茅台</div>
+            </div>
+
+            <div class="carousel-item" style="text-align:center">
+                <img src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1023659935,3070758985&fm=26&gp=0.jpg">
+                <div class="carousel-caption">涪陵榨菜</div>
+            </div>
+
+            <div class="carousel-item" style="text-align:center">
+                <img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=517265915,2700244710&fm=26&gp=0.jpg">
+                <div class="carousel-caption">大红袍</div>
+            </div>
+
+        </div>
+
+        <!-- 左右切换按钮 -->
+        <a class="carousel-control-prev" href="#demo" data-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#demo" data-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </a>
+    </div>
+
+    <div class="row" th:replace="~{common/footer}"></div>
+</div>
+</body>
+</html>

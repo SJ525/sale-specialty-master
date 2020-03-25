@@ -1,0 +1,74 @@
+<!-- 模态框:展示客户详情-->
+<div class="modal fade" id="customerModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">该客户详情</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户类型</span>
+                    </div>
+                    <input type="text" class="form-control" id="cusType5">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户名称</span>
+                    </div>
+                    <input type="text" class="form-control" id="cusName5">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户电话</span>
+                    </div>
+                    <input type="text" class="form-control" id="cusPhone5">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户邮箱</span>
+                    </div>
+                    <input type="text" class="form-control" id="cusEmail5">
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">客户地址</span>
+                    </div>
+                    <textarea rows="2" class="form-control" id="cusAddress5"></textarea>
+                </div>
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <!--点击"订单详情"按钮，为模态框的所有文本框动态加载数据-->
+    $("#showCustomer").click(function(){
+       var cusId=$(this).val();
+       $.ajax({
+            type:"get",
+            url:"/customer/getCusMsg",
+            data:{"cusId":cusId},
+            success:function(data) {
+                $("#cusType5").val(data.cusType);
+                $("#cusName5").val(data.cusName);
+                $("#cusPhone5").val(data.cusPhone);
+                $("#cusEmail5").val(data.cusEmail);
+                $("#cusAddress5").val(data.cusAddress);
+            }
+        });
+    });
+</script>

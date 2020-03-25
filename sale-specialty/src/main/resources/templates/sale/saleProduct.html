@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head th:replace="~{common/header::header('销售特产管理页面')}"></head>
+<style>
+	.list-group-item,.carousel-item{
+		text-align:center;
+	}
+</style>
+<body>
+<div class="container-fluid">
+    <div class="row" th:replace="~{/common/nav::nav('sale')}"></div>
+    <div class="row">
+        <div class="col-lg-2" style="padding-right:0px;">
+            <div class="card bg-light mb-3" style="height:650px;">
+                <div class="card-header">
+                    销售管理
+                </div>
+                <div class="list-group" >
+                    <div><a class="list-group-item" href="/saleOrder/list">销售订单管理</a></div>
+                    <div><a class="list-group-item active" href="/saleProduct/list">销售特产管理</a></div>
+                    <div><a class="list-group-item" href="/saleOrderReturn/list">销售订单退货管理</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10" style="padding-left:0px;">
+            <div class="card bg-light mb-3">
+
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-4">当前位置:销售管理>销售特产管理</div>
+                        <div class="col-lg-2">
+                            <a class="btn btn-success btn-xs" style="padding:0px;" href="/saleProduct/list">刷新页面</a>
+                        </div>
+                        <div class="col-lg-2">
+                            <button class="btn btn-primary btn-xs" style="padding:0px;" data-toggle="modal" data-target="#addModal" id="selectGet">新建销售特产</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body" style="background-color: white;height:600px;">
+                    <form class="form-inline" method="get" action="/saleProduct/queryFirst">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">特产名称:</span>
+                        </div>
+                        <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" name="saleProId" id="proName">
+                        </select>
+
+                        <div class="col-lg-1"></div>
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">所属销售订单:</span>
+                        </div>
+                        <select class="selectpicker show-tick form-control" data-size="10" data-live-search="true" name="saleOrderId" id="orderNumber">
+                        </select>
+                        <div class="col-lg-1"></div>
+                        <button type="submit" class="btn btn-primary">查询</button>
+                    </form>
+                    <div class="row" style="padding:5px;"></div>
+                    <form class="form-inline" method="get" action="/saleProduct/querySecond">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">销售数量区间:</span>
+                        </div>
+                        <input class="form-control" type="text" name="startQuantity" style="width:140px;">-
+                        <input class="form-control" type="text" name="endQuantity" style="width:140px;">
+                        <div style="width:50px;"></div>
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">销售价格区间:</span>
+                        </div>
+                        <input class="form-control" type="text" name="startPrice" style="width:140px;" placeholder="￥">-
+                        <input class="form-control" type="text" name="endPrice" style="width:140px;" placeholder="￥">
+                        <div style="width:50px;"></div>
+                        <button type="submit" class="btn btn-primary">查询</button>
+                    </form>
+
+                    <div class="row" style="padding:5px;"></div>
+
+                    <table class="table" style="border: 1px solid #cccfc9;">
+                        <thead>
+                        <tr class="table-secondary">
+                            <th scope="col">销售特产id</th>
+                            <th scope="col">特产名称</th>
+                            <th scope="col">所属销售订单</th>
+                            <th scope="col">销售数量</th>
+                            <th scope="col">销售价格</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="data:${datas.content}" th:object="${data}" onMouseOver="style.backgroundColor='#ffff99'" onMouseOut="style.backgroundColor='#FFFFFF'">
+                            <td th:text="*{saleId}"></td>
+                            <td th:text="*{proName}"></td>
+                            <td th:text="*{orderNumber}"></td>
+                            <td th:text="*{quantity}+*{proUnit}"></td>
+                            <td th:text="|￥|+*{price}"></td>
+                            <td>
+                                <button class="btn btn-success btn-xs" style="padding:0px;" data-toggle="modal" data-target="#showModal" th:onclick="showMore([[${data.saleId}]])">销售详情</button>
+                                <button class="btn btn-primary btn-xs" style="padding:0px;" data-toggle="modal" data-target="#modModal" th:onclick="getMsg([[${data.saleId}]])">修改</button>
+                                <button class="btn btn-danger btn-xs" style="padding:0px;" th:onclick="delSaleProduct([[${data.saleId}]])">删除</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--导入分页模块-->
+                    <nav class="col-lg-1" th:replace="~{common/page}"></nav>
+                    <!--导入新建销售特产模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/sale/saleProduct/addSaleProduct}"></div>
+                    <!--导入修改销售特产模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/sale/saleProduct/modSaleProduct}"></div>
+                    <!--导入展示销售特产模态框模块-->
+                    <div class="modal fade" th:replace="~{modal/sale/saleProduct/showSaleProduct}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" th:replace="~{common/footer}"></div>
+</div>
+<script>
+    <!--点击"删除"按钮，执行删除数据操作-->
+    function delSaleProduct(saleId){
+        if(window.confirm('同时将删除该销售特产关联的数据，确定删除该销售特产？')){
+            $.ajax({
+                type:"post",
+                url:"/saleProduct/delSaleProduct",
+                data:{"saleId":saleId},
+                success:function(data){
+                    alert(data.msg);
+                    window.location.reload();
+                },
+                error:function(){
+                    alert("删除失败");
+                }
+            });
+        }
+    }
+    //为页面所有下拉列表动态加载数据
+    $(document).ready(function(){
+         $("#proName").selectpicker({
+            noneSelectedText : '-请选择-'
+         });
+         $("#orderNumber").selectpicker({
+            noneSelectedText : '-请选择-'
+         });
+         $(window).on('load', function() {
+            $('#proName').selectpicker('val', '');
+            $('#proName').selectpicker('refresh');
+            $('#orderNumber').selectpicker('val', '');
+            $('#orderNumber').selectpicker('refresh');
+         });
+
+         $.ajax({
+             type:'get',
+             url: "/saleProduct/getAllSaleProduct",
+             dataType:'json',
+             success:function(result){
+                 for(var i=0;i<result.length;i++){
+                    $("#proName").append($("<option value=\"" + result[i].saleProId + "\">" + result[i].proName + "</option>"));
+                    $("#orderNumber").append($("<option value=\"" + result[i].saleOrderId + "\">" + result[i].orderNumber + "</option>"));
+                 }
+                 $('#proName').selectpicker('val','');
+                 $('#proName').selectpicker('refresh');
+                 $('#orderNumber').selectpicker('val','');
+                 $('#orderNumber').selectpicker('refresh');
+             }
+        });
+    });
+</script>
+</body>
+</html>
